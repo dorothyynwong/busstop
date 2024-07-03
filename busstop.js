@@ -18,20 +18,18 @@ fetch(urlWithBusstop)
         const keys = Object.keys(body);
         const values = Object.values(body);
 
+        body.sort((a,b) => {
+            const b_time = new Date(b.expectedArrival);
+            const a_time = new Date(a.expectedArrival);
+            return b_time - a_time;
+        });
+
         //console.log(values);
         body.forEach(item => {
-            //console.log('Item:', item);
-           // console.log('Line ID:', item.lineId);
-           // console.log('Line Name:', item.lineName);
-           // console.log('Expected Arrival:', item.expectedArrival);
            console.log('bus :', item.lineId, 'arriving :', item.expectedArrival);
           })
 
     });
 
- /*   const myObject = { name: 'Alice', age: 30, city: 'Wonderland' };
-    const nameValue = myObject['name'];
-    console.log(nameValue); // 'Alice'*/
-    
 
 

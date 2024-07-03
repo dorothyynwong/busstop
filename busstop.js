@@ -24,8 +24,10 @@ fetch(urlWithBusstop)
             return b_time - a_time;
         });
 
+        const top5 = body.slice(0,5);
+
         //console.log(values);
-        body.forEach(item => {
+        top5.forEach(item => {
            console.log('bus :', item.lineId, 'arriving :', item.expectedArrival);
           })
 

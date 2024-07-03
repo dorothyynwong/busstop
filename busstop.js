@@ -4,30 +4,18 @@ const urlPostcode = 'https://api.postcodes.io/postcodes/E12 6UQ';
 
 const prompt = require("prompt-sync")({ sigint: true });
 //const userInput = prompt("Enter bus stop: ");
-const userInput = "490008660N";
+let userInput = "490008660N";
 
 //console.log(userInput);
 
-let urlWithBusstop = url.concat(userInput+"/Arrivals");
+//let urlWithBusstop = url.concat(userInput+"/Arrivals");
 //console.log(urlWithBusstop);
 
-/*let variable;
-try {
-const response = await fetch(“url.com”);
-const variable = response;
-if (response.status !== “200”) {
-throw “Error!”;
-} 
-console.log(variable);
-} catch (error) {
-console.log(error);
-}
-console.log(“Ok!”);*/
-let variable;
+// get the longitude and latitute based on postcode
   async function fetchData() {
     try {
         const response = await fetch(urlPostcode);
-        variable = response;
+
         
         const data = await response.json();
         
@@ -37,30 +25,63 @@ let variable;
     }
 }
 
-// Usage
+// get the values
+let longitude;
+let latitude;
 async function processData() {
     const result = await fetchData();
     //result.forEach(item => console.log(item.longitude));
-    let longitude = result["longitude"];
-    let latitude = result["latitude"];
-    //console.log(result["longitude"]);
-    console.log(longitude, latitude);
+    longitude = result["longitude"];
+    latitude = result["latitude"];
+    userInput= getBusStop(longitude, latitude);
+    getArrivalTimes(userInput);
+    //console.log(longitude, latitude);
+
 }
 
 processData();
 
-//result.forEach(item => {console.log(item.longitude)});
+function getBusStop(longitude, latitude)
+{
+
+    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.546818&lon=0.046895&stopTypes=NaptanPublicBusCoachTram'
+    async function fetchData() {
+        try {
+            const response = await fetch(urlToGetPostcode);
+            
+            const data = await response.json();
+            
+            return data["result"];
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    
+    // get the values
+     async function processData2() {
+        const result = await fetchData();
+        console.log(result);
+        //result.forEach(item => console.log(item.longitude));
+        //longitude = result["longitude"];
+        //latitude = result["latitude"];
+        //getArrivalTimes(longitude, latitude);
+        //console.log(longitude, latitude);
+    
+    }
+    
 
 
-/*fetchData().then(result => {
-    //console.log('Fetched data:', result);
-    result.forEach(item => {console.log(item.longitude)});
-        
-    });*/
+}
+
+
+function getArrivalTimes(userInput) {
+
+    let urlWithBusstop = url.concat(userInput+"/Arrivals");
+console.log(urlWithBusstop);
 
 
 
-/*
+
 fetch(urlWithBusstop)
     .then(response => response.json())
     .then(body => {
@@ -82,6 +103,5 @@ fetch(urlWithBusstop)
           })
 
     });
-
-*/
-
+    
+}

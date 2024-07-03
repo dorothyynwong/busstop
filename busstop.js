@@ -1,6 +1,7 @@
 //const url = "https://api.tfl.gov.uk/StopPoint/490008660N";
 const url = "https://api.tfl.gov.uk/StopPoint/";
 const urlPostcode = 'https://api.postcodes.io/postcodes/E12 6UQ';
+const urlStopcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram';
 
 const prompt = require("prompt-sync")({ sigint: true });
 //const userInput = prompt("Enter bus stop: ");
@@ -12,14 +13,22 @@ let userInput = "490008660N";
 //console.log(urlWithBusstop);
 
 // get the longitude and latitute based on postcode
-  async function fetchData(urlIn) {
+  async function fetchDataLoc(urlIn) {
     try {
         const response = await fetch(urlIn);
-
-        
         const data = await response.json();
-        
         return data["result"];
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+async function fetchDataStop(urlIn) {
+    try {
+        const response = await fetch(urlIn);
+        const data = await response.json();
+        //console.log(data["stopPoints"][0]);
+        return data["stopPoints"][0];
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -29,11 +38,15 @@ let userInput = "490008660N";
 let longitude;
 let latitude;
 async function processData() {
-    const result = await fetchData(urlPostcode);
+    const result_loc = await fetchDataLoc(urlPostcode);
     //result.forEach(item => console.log(item.longitude));
-    longitude = result["longitude"];
-    latitude = result["latitude"];
-    userInput= getBusStop(longitude, latitude);
+    longitude = result_loc["longitude"];
+    latitude = result_loc["latitude"];
+    //userInput= getBusStop(longitude, latitude);
+
+    const result_stop = await fetchDataStop(urlStopcode);
+    console.log(result_stop["id"]);
+
     //console.log(userInput);
    // getArrivalTimes(userInput);
     //console.log(longitude, latitude);
@@ -44,7 +57,7 @@ processData();
 
 function getBusStop(longitude, latitude) {
     console.log(longitude, latitude);
-    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram';
+    
 }
 /*function getBusStop(longitude, latitude)
 {

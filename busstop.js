@@ -1,11 +1,15 @@
-//const url = "https://api.tfl.gov.uk/StopPoint/490008660N";
+
 const url = "https://api.tfl.gov.uk/StopPoint/";
-const urlPostcode = 'https://api.postcodes.io/postcodes/E12 6UQ';
-const urlStopcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram';
+const urlPostcode = 'https://api.postcodes.io/postcodes/';
+//const urlStopcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram';
+
+
+/*Test code*/
+const userPostCode = "NW5 1NU"
 
 const prompt = require("prompt-sync")({ sigint: true });
 //const userInput = prompt("Enter bus stop: ");
-let userInput = "490008660N";
+//let userInput = "490008660N";
 
 //console.log(userInput);
 
@@ -38,61 +42,22 @@ async function fetchDataStop(urlIn) {
 let longitude;
 let latitude;
 async function processData() {
-    const result_loc = await fetchDataLoc(urlPostcode);
-    //result.forEach(item => console.log(item.longitude));
+    const result_loc = await fetchDataLoc(urlPostcode+userPostCode);
     longitude = result_loc["longitude"];
     latitude = result_loc["latitude"];
-    //userInput= getBusStop(longitude, latitude);
 
+    const urlStopcode = `https://api.tfl.gov.uk/StopPoint/?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram`;
     const result_stop = await fetchDataStop(urlStopcode);
-    console.log(result_stop["id"]);
-
-    //console.log(userInput);
-   // getArrivalTimes(userInput);
-    //console.log(longitude, latitude);
-
+    const stopPointId = result_stop["id"];
+    getArrivalTimes(stopPointId);
 }
 
 processData();
 
-function getBusStop(longitude, latitude) {
-    console.log(longitude, latitude);
-    
-}
-/*function getBusStop(longitude, latitude)
-{
+function getArrivalTimes(stopPoint) {
 
-    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram'
-    async function fetchData2() {
-        try {
-            const response = await fetch(urlToGetPostcode);
-            
-            const data = await response.json();
-            
-            return data["result"];
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-    
-    // get the values
-     async function processData2() {
-        const result = await fetchData2();
-        console.log(result);
-        //result.forEach(item => console.log(item.longitude));
-        //longitude = result["longitude"];
-        //latitude = result["latitude"];
-        //getArrivalTimes(longitude, latitude);
-        //console.log(longitude, latitude);
-    
-    }
-}*/
-
-
-function getArrivalTimes(userInput) {
-
-    let urlWithBusstop = url.concat(userInput+"/Arrivals");
-console.log(urlWithBusstop);
+    let urlWithBusstop = url.concat(stopPoint+"/Arrivals");
+    console.log(urlWithBusstop);
 
 
 

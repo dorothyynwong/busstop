@@ -12,9 +12,9 @@ let userInput = "490008660N";
 //console.log(urlWithBusstop);
 
 // get the longitude and latitute based on postcode
-  async function fetchData() {
+  async function fetchData(urlIn) {
     try {
-        const response = await fetch(urlPostcode);
+        const response = await fetch(urlIn);
 
         
         const data = await response.json();
@@ -29,23 +29,28 @@ let userInput = "490008660N";
 let longitude;
 let latitude;
 async function processData() {
-    const result = await fetchData();
+    const result = await fetchData(urlPostcode);
     //result.forEach(item => console.log(item.longitude));
     longitude = result["longitude"];
     latitude = result["latitude"];
     userInput= getBusStop(longitude, latitude);
-    getArrivalTimes(userInput);
+    //console.log(userInput);
+   // getArrivalTimes(userInput);
     //console.log(longitude, latitude);
 
 }
 
 processData();
 
-function getBusStop(longitude, latitude)
+function getBusStop(longitude, latitude) {
+    console.log(longitude, latitude);
+    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram';
+}
+/*function getBusStop(longitude, latitude)
 {
 
-    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.546818&lon=0.046895&stopTypes=NaptanPublicBusCoachTram'
-    async function fetchData() {
+    urlToGetPostcode = 'https://api.tfl.gov.uk/StopPoint/?lat=51.553814&lon=-0.143951&stopTypes=NaptanPublicBusCoachTram'
+    async function fetchData2() {
         try {
             const response = await fetch(urlToGetPostcode);
             
@@ -59,7 +64,7 @@ function getBusStop(longitude, latitude)
     
     // get the values
      async function processData2() {
-        const result = await fetchData();
+        const result = await fetchData2();
         console.log(result);
         //result.forEach(item => console.log(item.longitude));
         //longitude = result["longitude"];
@@ -68,10 +73,7 @@ function getBusStop(longitude, latitude)
         //console.log(longitude, latitude);
     
     }
-    
-
-
-}
+}*/
 
 
 function getArrivalTimes(userInput) {

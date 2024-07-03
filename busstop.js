@@ -5,10 +5,10 @@ const urlPostcode = 'https://api.postcodes.io/postcodes/';
 
 
 /*Test code*/
-const userPostCode = "NW5 1NU"
+//const userPostCode = "NW5 1NU"
 
 const prompt = require("prompt-sync")({ sigint: true });
-//const userInput = prompt("Enter bus stop: ");
+const userPostCode = prompt("Enter post code: ");
 //let userInput = "490008660N";
 
 //console.log(userInput);

@@ -115,7 +115,7 @@ function getArrivalTimes(stopPoints) {
                 top5.forEach(item => {
                 console.log('bus :', item.lineId, 'arriving :', item.expectedArrival);
                 })
-            });
+            })
         
     }
  
@@ -127,7 +127,10 @@ async function processData() {
    try {
     const stopPointIds = await getStopPoints(longitude, latitude);
     if (stopPointIds.length <= 0) throw "No stop points found";
-    getArrivalTimes(stopPointIds);
+    try {
+        await getArrivalTimes(stopPointIds);
+    }
+    catch(err) {log('No buses from this stop','warn')}
    } catch(err) {
     log(`No stop points found for post code ${userPostCode}`, "error");
     console.log(`No stop points found for post code ${userPostCode}`);

@@ -15,6 +15,7 @@ const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
 
 const prompt = require("prompt-sync")({ sigint: true });
 let userPostCode;
+let userRadius = 200;
 let postcodeCheck = false;
 
 
@@ -33,6 +34,9 @@ while (!postcodeCheck) {
     //console.log(postcodeCheck);
     log(postcodeCheck, "info");
 }
+
+userRadius = prompt("Enter radius: ");
+if (userRadius <0 ) userRadius = 200;
 
 function valid_postcode(postcode) {
     postcode = postcode.replace(/\s/g, "");
@@ -62,12 +66,12 @@ async function getCoordinatesFromPostCode() {
 
 // get 2 nearest stop points from longitude, latitude
 async function getStopPoints(longitude, latitude) {
-    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=200`;
+    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=${userRadius}`;
     json = await fetchData(urlStopcode);
     //console.log(json);
     //log(json, "info");
    // const result_stop = json["stopPoints"][0]
-   try {
+   //try {
     const result_stops = json["stopPoints"];
     result_stops.sort((a,b) => a.distance - b.distance);
     if (result_stops.length < 1) throw "No stop points found";
@@ -77,10 +81,10 @@ async function getStopPoints(longitude, latitude) {
         stopPointIds.push(stopPoint.id);
     }
     return stopPointIds;
-   } catch (err) {
+   /*} catch (err) {
     log(`No stop points found for post code ${userPostCode}`, "error");
     console.log(`No stop points found for post code ${userPostCode}`);
-   }
+   }*/
 
     //stopPointId = json.stopPoints[0].id;
    // log(result_stops,"info");

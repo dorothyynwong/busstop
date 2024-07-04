@@ -1,3 +1,27 @@
+/*const winston = require('winston');
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'userInput.log' })
+    ]
+});
+
+logger.info('What rolls down stairs');
+logger.info('alone or in pairs,');
+logger.info('and over your neighbors dog?');
+logger.warn('Whats great for a snack,');
+logger.info('And fits on your back?');
+logger.error('Its log, log, log');*/
+
+// initalise log 
+
+const winston = require('winston');
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: `busstop.log` })
+    ]
+});
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
@@ -20,7 +44,8 @@ while (!postcodeCheck) {
         if (userExit==='1')
             break
         }
-    console.log(postcodeCheck);
+    //console.log(postcodeCheck);
+    log(postcodeCheck, "info");
 }
 
 function valid_postcode(postcode) {
@@ -53,7 +78,8 @@ async function getCoordinatesFromPostCode() {
 async function getStopPoints(longitude, latitude) {
     const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=500`;
     json = await fetchData(urlStopcode);
-    console.log(json);
+    //console.log(json);
+    log(json, "info");
     const result_stop = json["stopPoints"][0]
     return result_stop["id"];
 }
@@ -87,6 +113,28 @@ async function processData() {
     const stopPointId = await getStopPoints(longitude, latitude);
     getArrivalTimes(stopPointId);
 }
+
+
+
+// log
+function log(text, level) {
+    switch (level) {
+        case 'info':
+            logger.info(text);
+            break;
+        case 'warn':
+            logger.warn(text);
+            break;
+        case 'error':
+            logger.error(text);
+            break;
+        default:
+            logger.info(text);
+            break;
+    }
+}
+
+//initaliseLog("userInput.log");
 
 // only process if the postcode is valid
 if (postcodeCheck)

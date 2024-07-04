@@ -137,8 +137,12 @@ function getJourneyPlanner(urlIn) {
                 const leg = legs[0];
                 const instruction = leg["instruction"];
                 const steps = instruction["steps"];
-                const step = steps[0];
-                console.log(step.description);
+                for(let step of steps) {
+                    console.log(step.description);
+                    console.log(step.descriptionHeading);
+                }
+               // const step = steps[0];
+               // console.log(step.description);
                 //console.log([legs][instruction][steps][descriptionHeading])
  
             })

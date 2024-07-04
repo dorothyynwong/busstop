@@ -11,6 +11,7 @@ const logger = winston.createLogger({
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
+const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/BR33PE/to/BR35DT" // journey planner API
 
 
 const prompt = require("prompt-sync")({ sigint: true });
@@ -121,6 +122,26 @@ function getArrivalTimes(stopPoints) {
  
 }
 
+
+function getJourneyPlanner(urlIn) {
+    
+  //  for(let stopPoint of stopPoints) {
+        //let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
+        fetch(urlIn)
+            .then(response => response.json())
+            .then(body => {
+                console.log(body)
+                const keys = Object.keys(body);
+                const values = Object.values(body);
+                //console.log([legs][instruction][steps][descriptionHeading])
+ 
+            })
+        
+   // }
+ 
+}
+
+
 async function processData() {
     const [longitude, latitude] = await getCoordinatesFromPostCode();
    // const stopPointIds = await getStopPoints(longitude, latitude);
@@ -165,5 +186,7 @@ if (postcodeCheck)
 {
     processData();
 }
+// get the steps from and to
+getJourneyPlanner(urlJourney);
 
 

@@ -81,8 +81,34 @@ async function getStopPoints(longitude, latitude) {
     //console.log(json);
     log(json, "info");
     const result_stop = json["stopPoints"][0]
+    const result_stops = json["stopPoints"];
+    result_stops.sort((a,b) => a.distance - b.distance);
+    log(result_stops,"info");
     return result_stop["id"];
 }
+
+/*
+async function getStopPoints(longitude, latitude) {
+    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=500`;
+    json = await fetchData(urlStopcode)
+    /*
+    .then (body => {
+        console.log(body)
+        body.sort((a,b) => {
+            const b_distance= new Date(b.distance);
+            const a_distance = new Date(a.distance);
+        return b_distance - a_distance;
+        })
+    });
+    
+   console.log(json["stopPoints.distance"]);
+    //console.log(json);
+    log(json, "info");
+    const result_stop = json["stopPoints"][0];
+    return result_stop["id"];
+}
+*/
+
 //part 1: get top 5 arrival times and bus lines of a stop point
 function getArrivalTimes(stopPoint) {
     let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");

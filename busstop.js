@@ -1,24 +1,10 @@
-/*const winston = require('winston');
-const logger = winston.createLogger({
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'userInput.log' })
-    ]
-});
-
-logger.info('What rolls down stairs');
-logger.info('alone or in pairs,');
-logger.info('and over your neighbors dog?');
-logger.warn('Whats great for a snack,');
-logger.info('And fits on your back?');
-logger.error('Its log, log, log');*/
 
 // initalise log 
 
 const winston = require('winston');
 const logger = winston.createLogger({
     transports: [
-        new winston.transports.Console(),
+        //new winston.transports.Console(),
         new winston.transports.File({ filename: `busstop.log` })
     ]
 });
@@ -74,49 +60,75 @@ async function getCoordinatesFromPostCode() {
     return [longitude, latitude];
 }
 
-// get stop points from longitude, latitude
+// get 2 nearest stop points from longitude, latitude
 async function getStopPoints(longitude, latitude) {
-    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=500`;
+    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=200`;
     json = await fetchData(urlStopcode);
     //console.log(json);
-    log(json, "info");
-    const result_stop = json["stopPoints"][0]
+    //log(json, "info");
+   // const result_stop = json["stopPoints"][0]
+   try {
     const result_stops = json["stopPoints"];
     result_stops.sort((a,b) => a.distance - b.distance);
-    stopPointId = json.stopPoints[0].id;
+    if (result_stops.length < 1) throw "No stop points found";
+    const twoStopPoints = result_stops.length > 2 ? result_stops.slice(0,2) : result_stops;
+    let stopPointIds = [];
+    for(let stopPoint of twoStopPoints) {
+        stopPointIds.push(stopPoint.id);
+    }
+    return stopPointIds;
+   } catch (err) {
+    log(`No stop points found for post code ${userPostCode}`, "error");
+    console.log(`No stop points found for post code ${userPostCode}`);
+   }
+
+    //stopPointId = json.stopPoints[0].id;
    // log(result_stops,"info");
-    return stopPointId;
+    //return stopPointId;
+    //const twoStopPoints = result_stops.slice(0,2);
+    //return [twoStopPoints[0].id, twoStopPoints[1].id];
 }
 
 //part 1: get top 5 arrival times and bus lines of a stop point
-function getArrivalTimes(stopPoint) {
-    let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
-    fetch(urlWithBusstop)
-        .then(response => response.json())
-        .then(body => {
-            //console.log(body)
-            const keys = Object.keys(body);
-            const values = Object.values(body);
-
-            body.sort((a,b) => {
-                const b_time = new Date(b.expectedArrival);
-                const a_time = new Date(a.expectedArrival);
-                return b_time - a_time;
-            });
-
-            const top5 = body.slice(0,5);
-            top5.forEach(item => {
-            console.log('bus :', item.lineId, 'arriving :', item.expectedArrival);
-            })
-
-        });
+function getArrivalTimes(stopPoints) {
     
+    for(let stopPoint of stopPoints) {
+        let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
+        fetch(urlWithBusstop)
+            .then(response => response.json())
+            .then(body => {
+                //console.log(body)
+                const keys = Object.keys(body);
+                const values = Object.values(body);
+    
+                body.sort((a,b) => {
+                    const b_time = new Date(b.expectedArrival);
+                    const a_time = new Date(a.expectedArrival);
+                    return b_time - a_time;
+                });
+    
+                const top5 = body.slice(0,5);
+                top5.forEach(item => {
+                console.log('bus :', item.lineId, 'arriving :', item.expectedArrival);
+                })
+            });
+        
+    }
+ 
 }
 
 async function processData() {
     const [longitude, latitude] = await getCoordinatesFromPostCode();
-    const stopPointId = await getStopPoints(longitude, latitude);
-    getArrivalTimes(stopPointId);
+   // const stopPointIds = await getStopPoints(longitude, latitude);
+   try {
+    const stopPointIds = await getStopPoints(longitude, latitude);
+    if (stopPointIds.length <= 0) throw "No stop points found";
+    getArrivalTimes(stopPointIds);
+   } catch(err) {
+    log(`No stop points found for post code ${userPostCode}`, "error");
+    console.log(`No stop points found for post code ${userPostCode}`);
+   }
+   
 }
 
 

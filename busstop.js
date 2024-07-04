@@ -130,9 +130,15 @@ function getJourneyPlanner(urlIn) {
         fetch(urlIn)
             .then(response => response.json())
             .then(body => {
-                console.log(body)
-                const keys = Object.keys(body);
-                const values = Object.values(body);
+                //console.log(body);
+                const journeys = body["journeys"];
+                const journey = journeys[0];
+                const legs = journey["legs"];
+                const leg = legs[0];
+                const instruction = leg["instruction"];
+                const steps = instruction["steps"];
+                const step = steps[0];
+                console.log(step.description);
                 //console.log([legs][instruction][steps][descriptionHeading])
  
             })

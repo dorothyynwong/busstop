@@ -4,7 +4,30 @@ const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
 
 
 const prompt = require("prompt-sync")({ sigint: true });
-const userPostCode = prompt("Enter post code: ");
+let userPostCode;
+let postcodeCheck = false;
+
+
+while (!postcodeCheck) {
+    userPostCode = prompt("Enter post code: ");
+
+    // check if postcode is valid
+    postcodeCheck = valid_postcode(userPostCode);
+    // if not valid, ask user if they want to exit
+    if (!postcodeCheck)
+        {
+        userExit = prompt("Enter 1 if you want to exit:")
+        if (userExit==='1')
+            break
+        }
+    console.log(postcodeCheck);
+}
+
+function valid_postcode(postcode) {
+    postcode = postcode.replace(/\s/g, "");
+    var regex = /^[A-Z]{1,2}[0-9]{1,2} ?[0-9][A-Z]{2}$/i;
+    return regex.test(postcode);
+}
 
 // get data from URL
   async function fetchData(urlIn) {
@@ -28,7 +51,7 @@ async function getCoordinatesFromPostCode() {
 
 // get stop points from longitude, latitude
 async function getStopPoints(longitude, latitude) {
-    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram`;
+    const urlStopcode = `${urlTFL}?lat=${latitude}&lon=${longitude}&stopTypes=NaptanPublicBusCoachTram&radius=500`;
     json = await fetchData(urlStopcode);
     console.log(json);
     const result_stop = json["stopPoints"][0]
@@ -65,6 +88,10 @@ async function processData() {
     getArrivalTimes(stopPointId);
 }
 
-processData();
+// only process if the postcode is valid
+if (postcodeCheck)
+{
+    processData();
+}
 
 

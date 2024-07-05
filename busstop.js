@@ -1,6 +1,5 @@
 
-// initalise log 
-
+// initalise log, prompt and variables
 const winston = require('winston');
 const logger = winston.createLogger({
     transports: [
@@ -11,13 +10,13 @@ const logger = winston.createLogger({
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
-//const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/NW51TL/to/490008660N" // journey planner API
 const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/" // journey planner API
 
-
 const prompt = require("prompt-sync")({ sigint: true });
+
+
 let userPostCode;
-let userRadius = 200;
+let userRadius;
 let postcodeCheck = false;
 let fromPostCode;
 let toPostCode;
@@ -31,6 +30,9 @@ do  {
 if (choice === "1") planJourney();
 else getNearestBus();
 
+//get postcode from users
+//input: text - instruction to users
+//       defaultPostCode - default post code if it's not entered
 function getPostCode(text, defaultPostCode) {
     let validPostCode = false;
     let postCode = "";
@@ -47,14 +49,17 @@ function getPostCode(text, defaultPostCode) {
     } while(!validPostCode);
     return postCode;
 }
+
+// Plan Journey (option 1 from the menu, part 3 of the exercise)
 function planJourney() {
 
     fromPostCode = getPostCode("Please input the from postcode", "NW5 1NU");
-    toPostCode = getPostCode("Please input the to postcode", "BR3 5DT");
+    toPostCode = getPostCode("Please input the to postcode", "BR1 1DN");
     getJourneyPlanner(urlJourney, fromPostCode,toPostCode);
 }
 
 
+// Get the nearest bus stops and arriving time (part 2 of the exercise)
 function getNearestBus() {
     postcodeCheck = false;
 
@@ -85,7 +90,7 @@ function getNearestBus() {
     
 }
 
-
+// validate postcode to see if it's in correct format
 function valid_postcode(postcode) {
     postcode = postcode.replace(/\s/g, "");
     var regex = /^[A-Z]{1,2}[0-9]{1,2} ?[0-9][A-Z]{2}$/i;
@@ -169,7 +174,7 @@ function getArrivalTimes(stopPoints) {
  
 }
 
-
+// get the first journey from TFL API by inputting from and to location
 function getJourneyPlanner(urlIn, fromLocation, toLocation) {
     
   //  for(let stopPoint of stopPoints) {
@@ -210,7 +215,12 @@ function getJourneyPlanner(urlIn, fromLocation, toLocation) {
  
 }
 
-
+/* 
+1. get coordinates from postcodes
+2. get 2 nearest stop points from postcodes
+3. get arrival times of 5 buses from the stop points
+4. get journey instructions from the postcode to the nearest stop point
+*/
 async function processData() {
     const [longitude, latitude] = await getCoordinatesFromPostCode();
    // const stopPointIds = await getStopPoints(longitude, latitude);

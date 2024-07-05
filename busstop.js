@@ -45,18 +45,15 @@ function getPostCode(text, defaultPostCode) {
         log(`postcode ${postCode}`, "info");
 
     } while(!validPostCode);
-
+    return postCode;
 }
-function getPostcodesFromUser() {
+function planJourney() {
 
     fromPostCode = getPostCode("Please input the from postcode", "NW5 1NU");
     toPostCode = getPostCode("Please input the to postcode", "BR3 5DT");
-  
+    getJourneyPlanner(urlJourney, fromPostCode,toPostCode);
 }
 
-function planJourney() {
-    getPostcodesFromUser();
-}
 
 function getNearestBus() {
     postcodeCheck = false;
@@ -87,10 +84,6 @@ function getNearestBus() {
     }
     
 }
-
-
-
-
 
 
 function valid_postcode(postcode) {
@@ -177,25 +170,35 @@ function getArrivalTimes(stopPoints) {
 }
 
 
-function getJourneyPlanner(urlIn, userPostCode, stopPointId) {
+function getJourneyPlanner(urlIn, fromLocation, toLocation) {
     
   //  for(let stopPoint of stopPoints) {
         //let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
-        let newUrl = urlIn.concat(userPostCode,'/to/',stopPointId);  // add the postcode and stop id
+        let newUrl = urlIn.concat(fromLocation,'/to/',toLocation);  // add the postcode and stop id
         log(newUrl,'info');
         fetch(newUrl)
             .then(response => response.json())
             .then(body => {
-                //console.log(body);
+                // console.log(body);
                 const journeys = body["journeys"];
                 const journey = journeys[0];
                 const legs = journey["legs"];
                 const leg = legs[0];
-                const instruction = leg["instruction"];
-                const summary = instruction["summary"];
-                const steps = instruction["steps"];
-                for(let step of steps) {
-                    console.log(instruction.summary,':',step.descriptionHeading, step.description);
+                // const instruction = leg["instruction"];
+                // const summary = instruction["summary"];
+                // const steps = instruction["steps"];
+                let startDate = new Date(journey.startDateTime);
+                let toDate = new Date(journey.arrivalDateTime);
+                console.log('Journey start/end times:',startDate.toLocaleTimeString(), toDate.toLocaleTimeString());
+                for (let eachLeg of legs) {
+                    const instruction = eachLeg["instruction"];
+                    const steps = instruction["steps"];
+                    stepStartDate = new Date(eachLeg.departureTime);
+                    stepFromDate = new Date(eachLeg.arrivalTime);
+                    console.log('leg summary:',instruction.summary, ', duration:',eachLeg.duration,'departure/arrival times:', stepFromDate.toLocaleTimeString(), ',',stepFromDate.toLocaleTimeString())
+                    for(let step of steps) {
+                        console.log('detailed Steps:',step.descriptionHeading, step.description );
+                    }
                 }
                // const step = steps[0];
                // console.log(step.description);

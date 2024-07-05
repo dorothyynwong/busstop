@@ -129,3 +129,6 @@
 {"level":"info","message":"https://api.tfl.gov.uk/Journey/JourneyResults/NW5 1TL/to/490008660S"}
 {"level":"info","message":true}
 {"level":"info","message":"https://api.tfl.gov.uk/Journey/JourneyResults/NW5 1TL/to/490008660S"}
+{"level":"info","message":true}
+{"level":"info","message":"https://api.tfl.gov.uk/Journey/JourneyResults/NW5 1TL/to/490008660S"}
+{"level":"warn","message":"No buses from this stop"}

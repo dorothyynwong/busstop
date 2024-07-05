@@ -22,8 +22,7 @@ let postcodeCheck = false;
 
 
 while (!postcodeCheck) {
-    userPostCode = prompt("Enter post code: ");
-
+    userPostCode = prompt("Enter post code (will default to NW5 1TL): ","NW5 1TL");
     // check if postcode is valid
     postcodeCheck = valid_postcode(userPostCode);
     // if not valid, ask user if they want to exit
@@ -37,7 +36,7 @@ while (!postcodeCheck) {
     log(postcodeCheck, "info");
 }
 
-userRadius = prompt("Enter radius: ");
+userRadius = prompt("Enter radius (will default to 500): ",500);
 
 if (userRadius <0 ) userRadius = 200;
 
@@ -130,7 +129,7 @@ function getJourneyPlanner(urlIn, userPostCode, stopPointId) {
   //  for(let stopPoint of stopPoints) {
         //let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
         let newUrl = urlIn.concat(userPostCode,'/to/',stopPointId);  // add the postcode and stop id
-        console.log(newUrl);
+        log(newUrl,'info');
         fetch(newUrl)
             .then(response => response.json())
             .then(body => {
@@ -142,7 +141,6 @@ function getJourneyPlanner(urlIn, userPostCode, stopPointId) {
                 const instruction = leg["instruction"];
                 const summary = instruction["summary"];
                 const steps = instruction["steps"];
-                console.log(summary);
                 for(let step of steps) {
                     console.log(instruction.summary,':',step.descriptionHeading, step.description);
                 }
@@ -168,7 +166,9 @@ async function processData() {
         // get the steps from and to
         getJourneyPlanner(urlJourney, userPostCode,stopPointIds[0]);
     }
-    catch(err) {log('No buses from this stop','warn')}
+    catch(err) {log('No buses from this stop','warn');
+        console.log("No buses from this stop");
+    }
    } catch(err) {
     log(`No stop points found for post code ${userPostCode}`, "error");
     console.log(`No stop points found for post code ${userPostCode}`);

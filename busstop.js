@@ -11,7 +11,8 @@ const logger = winston.createLogger({
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
-const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/NW51TL/to/490008660N" // journey planner API
+//const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/NW51TL/to/490008660N" // journey planner API
+const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/" // journey planner API
 
 
 const prompt = require("prompt-sync")({ sigint: true });
@@ -123,11 +124,13 @@ function getArrivalTimes(stopPoints) {
 }
 
 
-function getJourneyPlanner(urlIn) {
+function getJourneyPlanner(urlIn, userPostCode, stopPointId) {
     
   //  for(let stopPoint of stopPoints) {
         //let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
-        fetch(urlIn)
+        let newUrl = urlIn.concat(userPostCode,'/to/',stopPointId);  // add the postcode and stop id
+        console.log(newUrl);
+        fetch(newUrl)
             .then(response => response.json())
             .then(body => {
                 //console.log(body);
@@ -161,6 +164,9 @@ async function processData() {
     if (stopPointIds.length <= 0) throw "No stop points found";
     try {
         await getArrivalTimes(stopPointIds);
+        // get the steps from and to
+        console.log('checking stop ids before journey planner call',stopPointsIds);
+        //getJourneyPlanner(urlJourney, userPostCode,stopPointsIds[0]);
     }
     catch(err) {log('No buses from this stop','warn')}
    } catch(err) {
@@ -168,6 +174,7 @@ async function processData() {
     console.log(`No stop points found for post code ${userPostCode}`);
    }
    
+
 }
 
 
@@ -197,7 +204,6 @@ if (postcodeCheck)
 {
     processData();
 }
-// get the steps from and to
-getJourneyPlanner(urlJourney);
+
 
 

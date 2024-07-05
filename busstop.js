@@ -11,7 +11,7 @@ const logger = winston.createLogger({
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
-const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/BR33PE/to/BR35DT" // journey planner API
+const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/NW51TL/to/490008660N" // journey planner API
 
 
 const prompt = require("prompt-sync")({ sigint: true });

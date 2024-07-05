@@ -10,7 +10,9 @@ const logger = winston.createLogger({
 
 const urlTFL = "https://api.tfl.gov.uk/StopPoint/";  //TFL API
 const urlPostcode = 'https://api.postcodes.io/postcodes/';  //Postcodes API
+//const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/NW51TL/to/490008660N" // journey planner API
 const urlJourney = "https://api.tfl.gov.uk/Journey/JourneyResults/" // journey planner API
+
 
 const prompt = require("prompt-sync")({ sigint: true });
 
@@ -177,8 +179,6 @@ function getArrivalTimes(stopPoints) {
 // get the first journey from TFL API by inputting from and to location
 function getJourneyPlanner(urlIn, fromLocation, toLocation) {
     
-  //  for(let stopPoint of stopPoints) {
-        //let urlWithBusstop = urlTFL.concat(stopPoint+"/Arrivals");
         let newUrl = urlIn.concat(fromLocation,'/to/',toLocation);  // add the postcode and stop id
         log(newUrl,'info');
         fetch(newUrl)
@@ -200,19 +200,46 @@ function getJourneyPlanner(urlIn, fromLocation, toLocation) {
                     const steps = instruction["steps"];
                     stepStartDate = new Date(eachLeg.departureTime);
                     stepFromDate = new Date(eachLeg.arrivalTime);
-                    console.log('leg summary:',instruction.summary, ', duration:',eachLeg.duration,'departure/arrival times:', stepFromDate.toLocaleTimeString(), ',',stepFromDate.toLocaleTimeString())
+                    console.log('leg summary: ',instruction.summary, ', duration: ',eachLeg.duration,', departure/arrival times: ', stepFromDate.toLocaleTimeString(), ',',stepFromDate.toLocaleTimeString())
                     for(let step of steps) {
-                        console.log('detailed Steps:',step.descriptionHeading, step.description );
+                        console.log('detailed Steps: ',step.descriptionHeading, step.description );
                     }
                 }
-               // const step = steps[0];
-               // console.log(step.description);
-                //console.log([legs][instruction][steps][descriptionHeading])
- 
             })
-        
-   // }
- 
+}
+
+function getDisruption(urlIn, stopPointId) {
+    
+    let newUrl = urlIn.concat(fromLocation,'/disruption/');  // generate the URL required to get disruptions for a given stop point
+    log(newUrl,'info');
+    fetch(newUrl)
+        .then(response => response.json())
+        .then(body => {
+            console.log(body);
+            /*
+            const journeys = body["journeys"];
+            const journey = journeys[0];
+            const legs = journey["legs"];
+            const leg = legs[0];
+            // const instruction = leg["instruction"];
+            // const summary = instruction["summary"];
+            // const steps = instruction["steps"];
+            let startDate = new Date(journey.startDateTime);
+            let toDate = new Date(journey.arrivalDateTime);
+            console.log('Journey start/end times:',startDate.toLocaleTimeString(), toDate.toLocaleTimeString());
+            for (let eachLeg of legs) {
+                const instruction = eachLeg["instruction"];
+                const steps = instruction["steps"];
+                stepStartDate = new Date(eachLeg.departureTime);
+                stepFromDate = new Date(eachLeg.arrivalTime);
+                console.log('leg summary: ',instruction.summary, ', duration: ',eachLeg.duration,', departure/arrival times: ', stepFromDate.toLocaleTimeString(), ',',stepFromDate.toLocaleTimeString())
+                for(let step of steps) {
+                    console.log('detailed Steps: ',step.descriptionHeading, step.description );
+                }
+            }
+                */
+        })
+        .catch( error => {console.log('no disruptions are stop point', stopPointId)})
 }
 
 /* 
@@ -231,6 +258,9 @@ async function processData() {
         await getArrivalTimes(stopPointIds);
         // get the steps from and to
         getJourneyPlanner(urlJourney, userPostCode,stopPointIds[0]);
+        console.log('checking for disruptions');
+        getDisruption(urlDisruption,stopPointIds[0]);
+
     }
     catch(err) {log('No buses from this stop','warn');
         console.log("No buses from this stop");

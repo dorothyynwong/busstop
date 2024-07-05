@@ -38,6 +38,7 @@ while (!postcodeCheck) {
 }
 
 userRadius = prompt("Enter radius: ");
+
 if (userRadius <0 ) userRadius = 200;
 
 function valid_postcode(postcode) {
@@ -165,8 +166,7 @@ async function processData() {
     try {
         await getArrivalTimes(stopPointIds);
         // get the steps from and to
-        console.log('checking stop ids before journey planner call',stopPointsIds);
-        //getJourneyPlanner(urlJourney, userPostCode,stopPointsIds[0]);
+        getJourneyPlanner(urlJourney, userPostCode,stopPointIds[0]);
     }
     catch(err) {log('No buses from this stop','warn')}
    } catch(err) {

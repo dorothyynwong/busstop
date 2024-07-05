@@ -59,3 +59,13 @@
 {"level":"info","message":true}
 {"level":"info","message":true}
 {"level":"info","message":"https://api.tfl.gov.uk/Journey/JourneyResults/NW5 1TL/to/490008660S"}
+{"level":"info","message":true}
+{"level":"info","message":"https://api.tfl.gov.uk/Journey/JourneyResults/NW5 1TL/to/490008660S"}
+{"level":"info","message":"from postcode NW5 1TL, to postcode BR3 5DT"}
+{"level":"info","message":"from postcode abc, to postcode undefined"}
+{"level":"info","message":"from postcode NW5 1TL, to postcode undefined"}
+{"level":"info","message":"from postcode NW5 1TL, to postcode NW5 1TL"}
+{"level":"info","message":"postcode NW5 1NU"}
+{"level":"info","message":"postcode BR3 5DT"}
+{"level":"info","message":"postcode NW5 1NU"}
+{"level":"info","message":"postcode BR3 5DT"}

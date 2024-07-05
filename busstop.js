@@ -19,26 +19,79 @@ const prompt = require("prompt-sync")({ sigint: true });
 let userPostCode;
 let userRadius = 200;
 let postcodeCheck = false;
+let fromPostCode;
+let toPostCode;
 
+let choice = "";
 
-while (!postcodeCheck) {
-    userPostCode = prompt("Enter post code (will default to NW5 1TL): ","NW5 1TL");
-    // check if postcode is valid
-    postcodeCheck = valid_postcode(userPostCode);
-    // if not valid, ask user if they want to exit
-    if (!postcodeCheck)
-        {
-        userExit = prompt("Enter 1 if you want to exit:")
-        if (userExit==='1')
-            break
+do  {
+  choice = prompt("1. Plan Journey, 2. Nearest Bus Stop (default 2)", "2");
+} while (choice !== "1" && choice !== "2");
+
+if (choice === "1") planJourney();
+else getNearestBus();
+
+function getPostCode(text, defaultPostCode) {
+    let validPostCode = false;
+    let postCode = "";
+    do {
+        postCode = prompt(`${text}, default ${defaultPostCode}`, defaultPostCode);
+        if (valid_postcode(postCode)) validPostCode = true;
+        if (!validPostCode){
+            userExit = prompt("Invalid from postcode. Enter 1 if you want to exit or press enter to try again");
+            if (userExit==='1')
+                break;
         }
-    //console.log(postcodeCheck);
-    log(postcodeCheck, "info");
+        log(`postcode ${postCode}`, "info");
+
+    } while(!validPostCode);
+
+}
+function getPostcodesFromUser() {
+
+    fromPostCode = getPostCode("Please input the from postcode", "NW5 1NU");
+    toPostCode = getPostCode("Please input the to postcode", "BR3 5DT");
+  
 }
 
-userRadius = prompt("Enter radius (will default to 500): ",500);
+function planJourney() {
+    getPostcodesFromUser();
+}
 
-if (userRadius <0 ) userRadius = 200;
+function getNearestBus() {
+    postcodeCheck = false;
+
+    // prompt user input of postcode & radius
+    while (!postcodeCheck) {
+        userPostCode = prompt("Enter post code (will default to NW5 1TL): ","NW5 1TL");
+        // check if postcode is valid
+        postcodeCheck = valid_postcode(userPostCode);
+        // if not valid, ask user if they want to exit
+        if (!postcodeCheck)
+            {
+            userExit = prompt("Enter 1 if you want to exit:")
+            if (userExit==='1')
+                break
+            }
+        //console.log(postcodeCheck);
+        log(postcodeCheck, "info");
+    }
+
+    userRadius = prompt("Enter radius (will default to 500): ",500);
+    if (userRadius <0 ) userRadius = 200;
+    
+    // only process if the postcode is valid
+    if (postcodeCheck)
+    {
+        processData();
+    }
+    
+}
+
+
+
+
+
 
 function valid_postcode(postcode) {
     postcode = postcode.replace(/\s/g, "");
@@ -197,13 +250,7 @@ function log(text, level) {
     }
 }
 
-//initaliseLog("userInput.log");
 
-// only process if the postcode is valid
-if (postcodeCheck)
-{
-    processData();
-}
 
 
 
